@@ -1,0 +1,63 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+After running the Indexing PCR, extract the Sample, well, set of barcodes and combine them with the UDI indices. Let's load the googlesheets4 package, use our identification and find one of the spreadsheets we want to load
+```{r}
+library(tidyverse)
+```
+
+```{r}
+library(googlesheets4)
+
+gs4_find() 
+```
+
+We want to load PCR_Indexing_51
+
+Option 1: Vector of columns, then read, then bind_rows 
+
+Option2: Pivotlonger name_correct, or  name_prefix
+```{r}
+
+
+read_sheet("1kr9eVOF0a04pC6gc0vuSZNmJ_BWmI9VVuDRO4UhG_Bc", skip = 14, n_max = 8)
+```
+
+Option1
+
+
+```{r}
+cols = list(1:6,
+            7:12)
+
+list(width = 6,times = 6)
+
+
+
+read_chunk <- function(ss, interval){
+  read_sheet(ss = ss,
+             range = cell_limits(ul = c(16,interval[1]),
+                                lr = c(24, interval[length(interval)])),
+             col_names = T)
+}
+
+map(cols, ~read_chunk("1kr9eVOF0a04pC6gc0vuSZNmJ_BWmI9VVuDRO4UhG_Bc", .x))
+
+
+read_chunk <- function(width, times){
+  
+  map(1:times, function(.x){
+    list (start = (1+((.x -1)*width)),
+            finish = width + ((.x -1)* width) )
+                     
+      
+  })
+  
+  
+}
+
+read_chunk(6,2)
+```
+
